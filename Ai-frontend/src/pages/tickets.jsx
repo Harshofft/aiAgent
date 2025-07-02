@@ -6,16 +6,19 @@ export default function Tickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  
   const token = localStorage.getItem("token");
-
   const fetchTickets = async () => {
+    console.log("Fetching tickets, token:", token);
     try {
-      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/tickets`, {
-        headers: { Authorization: `Bearer ${token}` },
+      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/tickets/get-tickets`, {
+        headers: { Authorization: `Bearer ${token}`},
         method: "GET",
       });
+      console.log("Fetch status:", res.status);
       const data = await res.json();
-      setTickets(data.tickets || []);
+      console.log("Fetch data:", data);
+      setTickets(data);
     } catch (err) {
       console.error("Failed to fetch tickets:", err);
     }
@@ -33,7 +36,7 @@ export default function Tickets() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/tickets`, {
+      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/tickets/create-ticket`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,4 +107,3 @@ export default function Tickets() {
     </div>
   );
 }
-

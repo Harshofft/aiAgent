@@ -1,18 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import React from 'react'
 
-function Navbar() {
-    const token = localStorage.getItem("token");
-    let user = localStorage.getItem("user");
-    if(user){
-        user = JSON.parse(user)
-    }
-    const navigate = useNavigate();
-    const logout =()=>{
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-        navigate("/login")
-    }
+export default function Navbar() {
+  const token = localStorage.getItem("token");
+  let user = localStorage.getItem("user");
+  if (user) {
+    user = JSON.parse(user);
+  }
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
   return (
     <div className="navbar bg-base-200">
       <div className="flex-1">
@@ -45,7 +45,5 @@ function Navbar() {
         )}
       </div>
     </div>
-  )
+  );
 }
-
-export default Navbar

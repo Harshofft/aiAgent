@@ -1,44 +1,46 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-function Login() {
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-  const  [form , setForm]= useState({email:"",password:""})
-    const [loading , setLoading] = useState(false)
-    const navigate = useNavigate()
-    const handleChange = async (e) => {
-        setForm({...form , [e.target.name]:e.target.value})
+export default function LoginPage() {
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/");
+      } else {
+        alert(data.message || "Login failed");
+      }
+    } catch (err) {
+      alert("Something went wrong");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    const handleLogin = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        try {
-           const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/login`,
-                {
-                    method :"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body: JSON.stringify(form)
-                }
-            )
-            const data = await res.json()
-            if(res.ok){
-                localStorage.setItem("token", data.token)
-                localStorage.setItem("user", JSON.stringify(data.user))
-                navigate("/")
-            }
-            else{
-                alert("signup first")
-            }
-        } catch (e) {
-            alert("signup failed")
-        }
-        finally{
-            setLoading(false)
-        }
-    }
+  };
+
   return (
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
+    <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
         <form onSubmit={handleLogin} className="card-body">
           <h2 className="card-title justify-center">Login</h2>
@@ -75,7 +77,5 @@ function Login() {
         </form>
       </div>
     </div>
-  )
+  );
 }
-
-export default Login

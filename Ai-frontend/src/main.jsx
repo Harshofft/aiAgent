@@ -1,39 +1,40 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { BrowserRouter, Route, Router } from "react-router-dom";
-import CheckAuth from "./components/checkAuth.jsx";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CheckAuth from "./components/check-auth.jsx";
 import Tickets from "./pages/tickets.jsx";
-import Ticket from "./pages/ticket.jsx";
+import TicketDetailsPage from "./pages/ticket.jsx";
 import Login from "./pages/login.jsx";
 import Signup from "./pages/signup.jsx";
 import Admin from "./pages/admin.jsx";
+import Navbar from "./components/navbar.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <Router>
+      <Navbar />
+      <Routes>
         <Route
           path="/"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth protectedRoute={true}>
               <Tickets />
             </CheckAuth>
-          }/>
-
+          }
+        />
         <Route
           path="/tickets/:id"
           element={
-            // for a specific ticket or one ticket
-            <CheckAuth protected={true}>
-              <Ticket />
+            <CheckAuth protectedRoute={true}>
+              <TicketDetailsPage />
             </CheckAuth>
           }
         />
         <Route
           path="/login"
           element={
-            <CheckAuth protected={false}>
+            <CheckAuth protectedRoute={false}>
               <Login />
             </CheckAuth>
           }
@@ -41,7 +42,7 @@ createRoot(document.getElementById("root")).render(
         <Route
           path="/signup"
           element={
-            <CheckAuth protected={false}>
+            <CheckAuth protectedRoute={false}>
               <Signup />
             </CheckAuth>
           }
@@ -49,12 +50,12 @@ createRoot(document.getElementById("root")).render(
         <Route
           path="/admin"
           element={
-            <CheckAuth protected={true}>
+            <CheckAuth protectedRoute={true}>
               <Admin />
             </CheckAuth>
           }
         />
-      </Router>
+      </Routes>
     </BrowserRouter>
   </StrictMode>
 );

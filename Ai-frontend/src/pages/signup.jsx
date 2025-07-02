@@ -31,9 +31,12 @@ function Signup() {
                 navigate("/");
             } else {
                 alert("Signup failed");
+                
+                
             }
         } catch (e) {
             alert("Signup failed");
+            console.error(e)
         } finally {
             setLoading(false);
         }

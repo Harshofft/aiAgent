@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-
+import { useNavigate } from "react-router-dom";
 export default function TicketDetailsPage() {
   const { id } = useParams();
+  const [complete , setComplete]= useState(false)
   const [ticket, setTicket] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
     const fetchTicket = async () => {
+      const token = localStorage.getItem("token");
+      console.log("Fetching A ticket TOKEN, token:", token);
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_SERVER_URL}/tickets/${id}`,
+          `${import.meta.env.VITE_SERVER_URL}/tickets/get-ticket/${id}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+              headers: {Authorization: `Bearer ${token}`},
+              method: "GET",
           }
         );
+        console.log("Fetch tick status:", res.status);
         const data = await res.json();
+        console.log(data);
         if (res.ok) {
           setTicket(data.ticket);
         } else {
@@ -33,10 +33,32 @@ export default function TicketDetailsPage() {
         setLoading(false);
       }
     };
-
+    useEffect(() => {
     fetchTicket();
   }, [id]);
 
+  const deleteTicket = async ()=>{
+    const navigate = useNavigate();
+    try {
+      const res = await fetch(
+          `${import.meta.env.VITE_SERVER_URL}/tickets/get-ticket/${id}`,
+          {
+              headers: {Authorization: `Bearer ${token}`},
+              method: "DELETE",
+              body: JSON.stringify({id}), 
+          }
+          
+        )
+         console.log("Fetch tick status:", res.status);
+         const data = await res.json();
+         navigate("/");
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(()=>{
+    deleteTicket()
+  }, complete)
   if (loading)
     return <div className="text-center mt-10">Loading ticket details...</div>;
   if (!ticket) return <div className="text-center mt-10">Ticket not found</div>;
@@ -83,7 +105,7 @@ export default function TicketDetailsPage() {
                 <strong>Assigned To:</strong> {ticket.assignedTo?.email}
               </p>
             )}
-
+            <button className="btn btn-primary "  onClick={()=>{setComplete(true)}}>Completed</button>
             {ticket.createdAt && (
               <p className="text-sm text-gray-500 mt-2">
                 Created At: {new Date(ticket.createdAt).toLocaleString()}

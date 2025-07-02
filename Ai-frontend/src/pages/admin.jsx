@@ -1,78 +1,90 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
-function Admin() {
-  const [users , setUsers ]= useState([]);
+export default function AdminPanel() {
+  const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [editingUser , setEditingUser] = useState(null);
-  const [formData , setFormData] = useState({role:"" , skills:""});
-  const [searchQuery, setSearchQuery]=  useState("");
-  const token  = localStorage.getItem("token");
-  useEffect(()=>{
-    fetchUser();
-  },[])
-  const fetchUser = async () => {
+  const [editingUser, setEditingUser] = useState(null);
+  const [formData, setFormData] = useState({ role: "", skills: "" });
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_SERVER_URL}/auth/users`, {
-        headers:{
-          token: `Bearer ${token}`
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      })
-       const data = await res.json();
+      });
+      const data = await res.json();
       if (res.ok) {
         setUsers(data);
         setFilteredUsers(data);
       } else {
         console.error(data.error);
       }
-    } catch (e) {
-      console.error("Error fetching users", e);
+    } catch (err) {
+      console.error("Error fetching users", err);
     }
-  }
-   const handleEditClick = (user) => {
+  };
+
+  const handleEditClick = (user) => {
     setEditingUser(user.email);
     setFormData({
       role: user.role,
       skills: user.skills?.join(", "),
     });
   };
+
   const handleUpdate = async () => {
     try {
-      const res =await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/auth/update-user`,
         {
-          method:POST,
-          headers:{
-            "Content-Type" :"application/json",
-            token : `Bearer${token}`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            email:editingUser,
+            email: editingUser,
             role: formData.role,
-            skills: formData.skills.split(',').map((skill)=>{skill.trim()}).filter(Boolean)
+            skills: formData.skills
+              .split(",")
+              .map((skill) => skill.trim())
+              .filter(Boolean),
           }),
         }
       );
+
       const data = await res.json();
       if (!res.ok) {
         console.error(data.error || "Failed to update user");
         return;
       }
-        setEditingUser(null);
+
+      setEditingUser(null);
       setFormData({ role: "", skills: "" });
-      fetchUser();
-    } catch (e) {
-      console.error("Update failed", e);
+      fetchUsers();
+    } catch (err) {
+      console.error("Update failed", err);
     }
-  }
-   const handleSearch = (e) => {
+  };
+
+  const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     setFilteredUsers(
       users.filter((user) => user.email.toLowerCase().includes(query))
     );
   };
+
   return (
-      <div className="max-w-4xl mx-auto mt-10">
+    <div className="max-w-4xl mx-auto mt-10">
       <h1 className="text-2xl font-bold mb-6">Admin Panel - Manage Users</h1>
       <input
         type="text"
@@ -149,8 +161,5 @@ function Admin() {
         </div>
       ))}
     </div>
-  )
-
+  );
 }
-
-export default Admin

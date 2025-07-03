@@ -105,7 +105,7 @@ export default function TicketDetailsPage() {
                 <strong>Assigned To:</strong> {ticket.assignedTo?.email}
               </p>
             )}
-            <button className="btn btn-primary "  onClick={()=>{setComplete(true)}}>Completed</button>
+            
             {ticket.createdAt && (
               <p className="text-sm text-gray-500 mt-2">
                 Created At: {new Date(ticket.createdAt).toLocaleString()}

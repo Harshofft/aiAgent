@@ -63,7 +63,7 @@ export default function Tickets() {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Create Ticket</h2>
+      <h2 className="text-2xl font-bold mb-4">Ask Question</h2>
 
       <form onSubmit={handleSubmit} className="space-y-3 mb-8">
         <input
@@ -87,7 +87,7 @@ export default function Tickets() {
         </button>
       </form>
 
-      <h2 className="text-xl font-semibold mb-2">All Tickets</h2>
+      <h2 className="text-xl font-semibold mb-2">All QUESTION</h2>
       <div className="space-y-3">
         {tickets.map((ticket) => (
           <Link
